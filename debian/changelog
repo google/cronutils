@@ -1,0 +1,5 @@
+cronutils (1.0-1) unstable; urgency=low
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Jamie Wilkinson <jaq@debian.org>  Sun, 09 Jan 2011 14:06:35 -0800

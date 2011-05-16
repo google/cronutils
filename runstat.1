@@ -1,0 +1,56 @@
+.\" -*- nroff -*-
+.TH RUNSTAT 1 "October 18, 2010" "Google, Inc."
+
+.SH NAME
+
+runstat \- collect statistics about execution of a process
+
+.SH SYNOPSYS
+
+\fBrunstat\fR [ \fB-h\fR ]
+
+\fBrunstat\fR [ \fB-d\fR ] [ \fB-f \fIpathname\fR ] \fIcommand\fR [ \fIargs\fR ]
+
+.SH DESCRIPTION
+
+\fBrunstat\fR tries to execute a command in a subprocess, and upon
+termination of the subprocess collects some statics about that
+subrocess, and writes them to a file.
+
+These statistics include time of execution, exit status, and elapsed
+time to execute, as well as use of various OS resources.
+
+.SH USAGE
+
+.TP
+\fB-d\fR
+
+Debug mode; send log messages to standard error as well as to the
+system log.
+
+.TP
+
+\fB-f \fIpathname\fR
+
+Specifies the pathname of the file to save the statistics to.  The default
+is to create a lock file in /tmp/cronutils-$USER with the name of the
+command, and suffix ".stat".
+
+.TP
+\fB-h\fR
+
+Prints some basic help.
+
+.SH SEE ALSO
+
+\fBrunalarm\fR(1), \fBrunlock\fR(1), \fBgetrusage\fR(2)
+
+.SH AUTHOR
+
+\fBrunstat\fR was written by Jamie Wilkinson <jaq@google.com>.
+
+.SH COPYRIGHT
+
+This program is copyright (C) 2010 Google, Inc.
+.PP
+It is licensed under the Apache License, Version 2.0

@@ -1,0 +1,57 @@
+.\" -*- nroff -*-
+.TH RUNALARM 1 "October 18, 2010" "Google, Inc."
+
+.SH NAME
+
+runalarm \- enforce a time limit on execution of a process
+
+.SH SYNOPSYS
+
+\fBrunalarm\fR [ \fB-h\fR ]
+
+\fBrunalarm\fR [ \fB-d\fR ] [ \fB-t \fItimeout\fR ] \fIcommand\fR [ \fIargs\fR ]
+
+.SH DESCRIPTION
+
+\fBrunalarm\fR tries to execute a command and, if the subprocess does
+not exit before a timer expires, tries to terminate that subprocess.
+Otherwise, the exit status of the command is returned.
+
+.SH USAGE
+
+.TP
+\fB-d\fR
+
+Debug mode; send log messages to standard error as well as to the
+system log.
+
+.TP
+\fB-t \fItimeout\fR
+
+Specifies the duration, in seconds, for \fBrunalarm\fR to allow the
+command to run.  The default is 1d duration (86400 seconds).
+
+.TP
+\fB-h\fR
+
+Prints some basic help.
+
+.SH BUGS
+
+Sending SIGALRM to \fBrunalarm\fR before the timer has expired will
+cause the subprocess to be killed.
+
+.SH SEE ALSO
+
+\fBrunlock\fR(1), \fBrunstat\fR(1)
+
+.SH AUTHOR
+
+\fBrunalarm\fR was written by Jamie Wilkinson <jaq@google.com>, based on some Python
+code by Craig Silverstein
+
+.SH COPYRIGHT
+
+This program is copyright (C) 2000-2010 Google, Inc.
+.PP
+It is licensed under the Apache License, Version 2.0

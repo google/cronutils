@@ -1,0 +1,66 @@
+.\" -*- nroff -*-
+.TH RUNLOCK 1 "October 18, 2010" "Google, Inc."
+
+.SH NAME
+
+runlock \- prevent concurrent execution of a process
+
+.SH SYNOPSYS
+
+\fBrunlock\fR [ \fB-h\fR ]
+
+\fBrunlock\fR [ \fB-d\fR ] [ \fB-f \fIpathname\fR ] [ \fB-t \fItimeout\fR ] \fIcommand\fR [ \fIargs\fR ]
+
+.SH DESCRIPTION
+
+\fBrunlock\fR tries to hold an exclusive lock while it executes a
+command. Subsequent execution of \fBrunlock\fR with the same lock,
+while that lock is held, will cause the new instance of \fBrunlock\fR
+to terminate with a faliure exit code. Otherwise, the exit code of the
+subprocess is returned.
+
+.SH USAGE
+
+.TP
+\fB-d\fR
+
+Debug mode; send log messages to standard error as well as to the
+system log.
+
+.TP
+
+\fB-f \fIpathname\fR
+
+Specifies the pathname of the file to use as a lock file.  The default
+is to create a lock file in /tmp/cronutils-$USER with the name of the
+command, and suffix ".pid".
+
+.TP
+\fB-t \fItimeout\fR
+
+Specifies the duration, in seconds, for \fBrunlock\fR to wait before
+giving up on trying to acquire the lock.  The default is 5 seconds.
+
+.TP
+\fB-h\fR
+
+Prints some basic help.
+
+.SH BUGS
+
+Sending SIGALRM to \fBrunlock\fR before the timer has expired will
+cause the subprocess to be killed.
+
+.SH SEE ALSO
+
+\fBrunalarm\fR(1), \fBrunstat\fR(1)
+
+.SH AUTHOR
+
+\fBrunlock\fR was written by Jamie Wilkinson <jaq@google.com>.
+
+.SH COPYRIGHT
+
+This program is copyright (C) 2010 Google, Inc.
+.PP
+It is licensed under the Apache License, Version 2.0

@@ -1,0 +1,16 @@
+Source: cronutils
+Section: admin
+Priority: extra
+Maintainer: Jamie Wilkinson <jaq@debian.org>
+Build-Depends: debhelper (>= 7)
+Standards-Version: 3.8.3
+Homepage: http://code.google.com/p/cronutils
+
+Package: cronutils
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Utilities to assist running batch processing jobs
+ A set of utilities to complement batch processing jobs, such as those
+ run from cron, by limiting concurrent execution of jobs, setting hard
+ limits on the runtime of a job, and recording execution statistics of
+ a completed job.
