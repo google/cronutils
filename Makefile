@@ -27,7 +27,7 @@ SOURCES = runalarm.c runlock.c runstat.c subprocess.c subprocess.h tempdir.c tem
 
 prefix = usr/local
 BINDIR = $(prefix)/bin
-MANDIR = $(prefix)/man/man1
+MANDIR = $(prefix)/share/man/man1
 VERSION = $(shell cat version)
 
 install:
