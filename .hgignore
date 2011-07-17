@@ -1,0 +1,8 @@
+syntax: glob
+runalarm
+runlock
+runstat
+debian/cronutils/*
+debian/cronutils.substvars
+debian/cronutils.debhelper.log
+debian/files
