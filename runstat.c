@@ -14,12 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+#define _GNU_SOURCE /* dprintf() */
+
+#include <libgen.h>
 #include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 #include <sys/resource.h>
+#include <sys/un.h>
 #include <sysexits.h>
 #include <syslog.h>
 #include <time.h>
@@ -39,6 +45,7 @@ static void usage(char * prog) {
           "status, and timestamp of completion.\n"
           "\noptions:\n"
           " -f path  Path to save the statistics file.\n"
+          " -C path  Path to collectd socket.\n"
           " -d       send log messages to stderr as well as syslog.\n"
           " -h       print this help\n", prog);
 }
@@ -84,7 +91,9 @@ void add_variable(struct variable ** var_list, const char * name, const enum var
 int main(int argc, char ** argv) {
   char * progname;
   int arg;
-  char statistics_filename[PATH_MAX], temp_filename[PATH_MAX];
+  char collectd_sockname[PATH_MAX] = {'\0'};
+  char statistics_filename[PATH_MAX] = {'\0'};
+  char temp_filename[PATH_MAX] = {'\0'};
   char * command;
   char ** command_args;
   struct timeval start_wall_time, end_wall_time;
@@ -98,11 +107,13 @@ int main(int argc, char ** argv) {
   struct variable * var_list = NULL, * var;
 
   progname = argv[0];
-  statistics_filename[0] = '\0';
-  temp_filename[0] = '\0';
 
-  while ((arg = getopt(argc, argv, "+f:hd")) > 0) {
+  while ((arg = getopt(argc, argv, "+C:f:hd")) > 0) {
     switch (arg) {
+    case 'C':
+      strncat(collectd_sockname, optarg, PATH_MAX - 1);
+      collectd_sockname[PATH_MAX-1] = '\0';
+      break;
     case 'h':
       usage(progname);
       exit(EXIT_SUCCESS);
@@ -231,7 +242,7 @@ int main(int argc, char ** argv) {
              var->units ? var->units : ""
              );
     write(temp_fd, buf, strlen(buf));
-  }
+ }
 
   fsync(temp_fd);
   close(temp_fd);
@@ -240,6 +251,53 @@ int main(int argc, char ** argv) {
     perror("rename");
     exit(EX_OSERR);
   }
+
+  /* Write to collectd */
+  if (collectd_sockname[0] != '\0') {
+    char hostname[HOST_NAME_MAX];
+    struct sockaddr_un sock;
+    int s;
+
+    if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+      perror("socket");
+      goto end;
+    }
+    sock.sun_family = AF_UNIX;
+    strncpy(sock.sun_path, collectd_sockname, sizeof(sock.sun_path) - 1);
+    sock.sun_path[sizeof(sock.sun_path) - 1] = '\0';
+    if (connect(s, (struct sockaddr*) &sock,
+                strlen(sock.sun_path) + sizeof(sock.sun_family)) == -1) {
+      perror("connect");
+      goto end;
+    }
+
+    gethostname(hostname, HOST_NAME_MAX-1);
+
+    for (var = var_list; var != NULL; var = var->next) {
+      char type[10] = {'\0'};
+      switch (var->kind) {
+      case GAUGE:
+        strncpy(type, "gauge", 9);
+        break;
+      case ABSOLUTE:
+        strncpy(type, "counter", 9);
+        break;
+      default:
+        perror("unknown var->kind");
+        break;
+      }
+      dprintf(s, "PUTVAL \"%s/runstat-%s/%s-%s\" %ld:%s\n",
+              hostname,
+              basename(command),
+              type, var->name,
+              end_wall_time.tv_sec,
+              var->value);
+      /* This next line is a bit of a hack to clear the pipe.*/
+      recv(s, buf, sizeof(buf) - 1, 0);
+    }
+    close(s);
+  }
+ end:
   closelog();
   return status;
 }
