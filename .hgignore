@@ -6,3 +6,5 @@ debian/cronutils/*
 debian/cronutils.substvars
 debian/cronutils.debhelper.log
 debian/files
+debian/patches
+.pc
