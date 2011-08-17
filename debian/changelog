@@ -1,3 +1,9 @@
+cronutils (1.1-2) unstable; urgency=low
+
+  * Added debian/watch file.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Sun, 24 Jul 2011 00:36:41 +1000
+
 cronutils (1.1-1) unstable; urgency=low
 
   * New upstream release. 
