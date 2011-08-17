@@ -35,6 +35,12 @@ limitations under the License.
 #include "subprocess.h"
 #include "tempdir.h"
 
+/* FreeBSD does not have HOST_NAME_MAX defined.
+ * TODO(jaq): use sysconf() to discover its value. */
+#if !defined(HOST_NAME_MAX) && defined(_POSIX_HOST_NAME_MAX)
+#define HOST_NAME_MAX _POSIX_HOST_NAME_MAX
+#endif
+
 static void usage(char * prog) {
   fprintf(stderr,
           "Usage: %s [options] command [arg [arg] ...]\n\n"
