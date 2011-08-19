@@ -1,6 +1,8 @@
-cronutils (1.1-3) lucid; urgency=low
+cronutils (1.1-3) unstable; urgency=low
 
   * Fix FTBFS on kfreebsd, by defining HOST_NAME_MAX.  (Closes: #635212)
+  * Put the libraries at the end of the linker call, allowing building
+    with --as-needed linker option (Thanks, Ilya Barygin)  (Closes: #637587)
 
  -- Jamie Wilkinson <jaq@debian.org>  Wed, 17 Aug 2011 12:04:14 +1000
 
