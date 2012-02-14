@@ -14,8 +14,8 @@ runstat \- collect statistics about execution of a process
 .SH DESCRIPTION
 
 \fBrunstat\fR tries to execute a command in a subprocess, and upon
-termination of the subprocess collects some statics about that
-subrocess, and writes them to a file.
+termination of the subprocess collects some statistics about that
+subprocess, and writes them to a file.
 
 These statistics include time of execution, exit status, and elapsed
 time to execute, as well as use of various OS resources.
@@ -33,7 +33,7 @@ system log.
 \fB-f \fIpathname\fR
 
 Specifies the pathname of the file to save the statistics to.  The default
-is to create a lock file in /tmp/cronutils-$USER with the name of the
+is to create a file in /tmp/cronutils-$USER with the name of the
 command, and suffix ".stat".
 
 .TP
