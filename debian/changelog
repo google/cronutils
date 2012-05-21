@@ -1,3 +1,9 @@
+cronutils (1.2-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Jamie Wilkinson <jaq@debian.org>  Mon, 21 May 2012 05:30:48 +0000
+
 cronutils (1.1-3) unstable; urgency=low
 
   * Fix FTBFS on kfreebsd, by defining HOST_NAME_MAX.  (Closes: #635212)
