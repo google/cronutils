@@ -78,6 +78,7 @@ int main(int argc, char ** argv) {
         fprintf(stderr, "invalid timeout specified: %s\n", optarg);
         exit(EX_DATAERR);
       }
+      break;
     case 'd':
       debug = LOG_PERROR;
       break;
@@ -106,10 +107,12 @@ int main(int argc, char ** argv) {
   sigaction(SIGALRM, &sa, &old_sa);
   /* exec the command */
   status = run_subprocess(command, command_args, &set_timeout_alarm);
+  alarm(0); /* shutdown the alarm */
   if (alarm_triggered) {
+    syslog(LOG_INFO, "command '%s' timed out after %d seconds", command,
+           timeout);
     status = 128 + SIGALRM;
   }
-  alarm(0); /* shutdown the alarm */
   closelog();
   exit(status);
 }
