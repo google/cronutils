@@ -95,6 +95,7 @@ int main(int argc, char ** argv) {
         fprintf(stderr, "invalid timeout specified: %s\n", optarg);
         exit(EX_DATAERR);
       }
+      break;
     default:
       break;
     }
