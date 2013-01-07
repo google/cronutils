@@ -97,9 +97,9 @@ void add_variable(struct variable ** var_list, const char * name, const enum var
 int main(int argc, char ** argv) {
   char * progname;
   int arg;
-  char collectd_sockname[PATH_MAX] = {'\0'};
-  char statistics_filename[PATH_MAX] = {'\0'};
-  char temp_filename[PATH_MAX] = {'\0'};
+  char * collectd_sockname;
+  char * statistics_filename;
+  char * temp_filename;
   char * command;
   char ** command_args;
   struct timeval start_wall_time, end_wall_time;
@@ -111,22 +111,35 @@ int main(int argc, char ** argv) {
   int debug = 0;
   struct rusage ru;
   struct variable * var_list = NULL, * var;
+  int s_len;
 
   progname = argv[0];
 
   while ((arg = getopt(argc, argv, "+C:f:hd")) > 0) {
     switch (arg) {
     case 'C':
-      strncat(collectd_sockname, optarg, PATH_MAX - 1);
-      collectd_sockname[PATH_MAX-1] = '\0';
+      s_len = strlen(optarg) + 1;
+      collectd_sockname = malloc(s_len);
+      if (collectd_sockname == NULL) {
+        perror("Allocating space for collectd_sockname");
+        exit(EX_OSERR);
+      }
+      strncpy(collectd_sockname, optarg, s_len);
+      collectd_sockname[s_len] = '\0';
       break;
     case 'h':
       usage(progname);
       exit(EXIT_SUCCESS);
       break;
     case 'f':
-      strncat(statistics_filename, optarg, PATH_MAX - 1);
-      statistics_filename[PATH_MAX-1] = '\0';
+      s_len = strlen(optarg) + 1;
+      statistics_filename = malloc(s_len);
+      if (statistics_filename == NULL) {
+        perror("Allocating space for statistics_filename");
+        exit(EX_OSERR);
+      }
+      strncpy(statistics_filename, optarg, s_len);
+      statistics_filename[s_len] = '\0';
       break;
     case 'd':
       debug = LOG_PERROR;
@@ -173,8 +186,14 @@ int main(int argc, char ** argv) {
   }
   syslog(LOG_DEBUG, "statistics filename is %s", statistics_filename);
 
-  strncat(temp_filename, statistics_filename, PATH_MAX - 1);
-  strncat(temp_filename, TEMPLATE, PATH_MAX - strlen(temp_filename) - 1);
+  s_len = strlen(statistics_filename) + strlen(TEMPLATE) + 1;
+  temp_filename = malloc(s_len);
+  if (temp_filename == NULL) {
+    perror("Allocation of temp_filename");
+    exit(EX_OSERR);
+  }
+  strncpy(temp_filename, statistics_filename, strlen(statistics_filename));
+  strncat(temp_filename, TEMPLATE, s_len - strlen(temp_filename) - 1);
   syslog(LOG_DEBUG, "temp filename is %s", temp_filename);
 
   if ((temp_fd = mkstemp(temp_filename)) < 0) {
@@ -259,7 +278,7 @@ int main(int argc, char ** argv) {
   }
 
   /* Write to collectd */
-  if (collectd_sockname[0] != '\0') {
+  if (collectd_sockname != NULL) {
     char hostname[HOST_NAME_MAX];
     struct sockaddr_un sock;
     int s;
