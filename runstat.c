@@ -192,7 +192,7 @@ int main(int argc, char ** argv) {
     perror("Allocation of temp_filename");
     exit(EX_OSERR);
   }
-  strncpy(temp_filename, statistics_filename, strlen(statistics_filename));
+  strncpy(temp_filename, statistics_filename, s_len);
   strncat(temp_filename, TEMPLATE, s_len - strlen(temp_filename) - 1);
   syslog(LOG_DEBUG, "temp filename is %s", temp_filename);
 
