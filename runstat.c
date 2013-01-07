@@ -111,7 +111,7 @@ int main(int argc, char ** argv) {
   int debug = 0;
   struct rusage ru;
   struct variable * var_list = NULL, * var;
-  int s_len;
+  size_t s_len;
 
   progname = argv[0];
 
