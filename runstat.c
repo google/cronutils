@@ -111,35 +111,35 @@ int main(int argc, char ** argv) {
   int debug = 0;
   struct rusage ru;
   struct variable * var_list = NULL, * var;
-  size_t s_len;
+  size_t collectd_len, statistics_len, temp_len;
 
   progname = argv[0];
 
   while ((arg = getopt(argc, argv, "+C:f:hd")) > 0) {
     switch (arg) {
     case 'C':
-      s_len = strlen(optarg) + 1;
-      collectd_sockname = malloc(s_len);
+      collectd_len = strlen(optarg) + 1;
+      collectd_sockname = malloc(collectd_len);
       if (collectd_sockname == NULL) {
         perror("Allocating space for collectd_sockname");
         exit(EX_OSERR);
       }
-      strncpy(collectd_sockname, optarg, s_len);
-      collectd_sockname[s_len] = '\0';
+      strncpy(collectd_sockname, optarg, collectd_len);
+      collectd_sockname[collectd_len] = '\0';
       break;
     case 'h':
       usage(progname);
       exit(EXIT_SUCCESS);
       break;
     case 'f':
-      s_len = strlen(optarg) + 1;
-      statistics_filename = malloc(s_len);
+      statistics_len = strlen(optarg) + 1;
+      statistics_filename = malloc(statistics_len);
       if (statistics_filename == NULL) {
         perror("Allocating space for statistics_filename");
         exit(EX_OSERR);
       }
-      strncpy(statistics_filename, optarg, s_len);
-      statistics_filename[s_len] = '\0';
+      strncpy(statistics_filename, optarg, statistics_len);
+      statistics_filename[statistics_len] = '\0';
       break;
     case 'd':
       debug = LOG_PERROR;
@@ -173,27 +173,22 @@ int main(int argc, char ** argv) {
   gettimeofday(&end_wall_time, NULL);
 
 
-  if (statistics_filename[0] == '\0') {
-    strncat(statistics_filename, make_tempdir(),
-            PATH_MAX - strlen(statistics_filename) - 1);
-    strncat(statistics_filename, "/",
-            PATH_MAX - strlen(statistics_filename) - 1);
-    strncat(statistics_filename, command,
-            PATH_MAX - strlen(statistics_filename) - 1);
-    strncat(statistics_filename, ".stat",
-            PATH_MAX - strlen(statistics_filename) - 1);
-    statistics_filename[PATH_MAX-1] = '\0';
+  if (statistics_filename != NULL) {
+    strncpy(statistics_filename, make_tempdir(), statistics_len);
+    strncat(statistics_filename, "/", statistics_len);
+    strncat(statistics_filename, command, statistics_len);
+    strncat(statistics_filename, ".stat", statistics_len);
   }
   syslog(LOG_DEBUG, "statistics filename is %s", statistics_filename);
 
-  s_len = strlen(statistics_filename) + strlen(TEMPLATE) + 1;
-  temp_filename = malloc(s_len);
+  temp_len = strlen(statistics_filename) + strlen(TEMPLATE) + 1;
+  temp_filename = malloc(temp_len);
   if (temp_filename == NULL) {
     perror("Allocation of temp_filename");
     exit(EX_OSERR);
   }
-  strncpy(temp_filename, statistics_filename, s_len);
-  strncat(temp_filename, TEMPLATE, s_len - strlen(temp_filename) - 1);
+  strncpy(temp_filename, statistics_filename, temp_len);
+  strncat(temp_filename, TEMPLATE, temp_len - strlen(temp_filename) - 1);
   syslog(LOG_DEBUG, "temp filename is %s", temp_filename);
 
   if ((temp_fd = mkstemp(temp_filename)) < 0) {

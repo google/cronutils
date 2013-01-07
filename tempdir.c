@@ -29,7 +29,8 @@ limitations under the License.
 #include "tempdir.h"
 
 const char * template = "/tmp/cronutils-";
-char dirname[PATH_MAX];
+char * dirname;
+size_t dirname_len;
 
 char * make_tempdir() {
   uid_t uid;
@@ -41,10 +42,14 @@ char * make_tempdir() {
     perror("getpwuid");
     exit(EX_OSERR);
   }
-  dirname[0] = '\0';
-  strncat(dirname, template, PATH_MAX - strlen(dirname) - 1);
-  strncat(dirname, pw->pw_name, PATH_MAX - strlen(dirname) - 1);
-  dirname[PATH_MAX-1] = '\0';
+  dirname_len = strlen(template) + strlen(pw->pw_name) + 1;
+  dirname = malloc(dirname_len);
+  if (dirname == NULL) {
+    perror("malloc dirname failed");
+    exit(EX_OSERR);
+  }
+  strncpy(dirname, template, dirname_len);
+  strncat(dirname, pw->pw_name, dirname_len);
   syslog(LOG_DEBUG, "temp dir is %s\n", dirname);
   if (mkdir(dirname, S_IRWXU) < 0) {
     if (errno == EEXIST) {
