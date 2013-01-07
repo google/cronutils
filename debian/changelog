@@ -1,3 +1,9 @@
+cronutils (1.3.1-1) unstable; urgency=low
+
+  * New upstream release. 
+
+ -- Jamie Wilkinson <jaq@debian.org>  Mon, 07 Jan 2013 22:26:39 +0000
+
 cronutils (1.3-1) unstable; urgency=low
 
   * New upstream release. 
