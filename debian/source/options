@@ -1,2 +1,0 @@
-# Ignore files not included i nthe release tarball.
-extend-diff-ignore = "(^|/)(cronutils.spec|runcron|examples)$"
