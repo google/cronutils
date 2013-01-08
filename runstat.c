@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#define _GNU_SOURCE /* dprintf() */
+#define _GNU_SOURCE /* dprintf(), asprintf */
 
 #include <libgen.h>
 #include <limits.h>
@@ -35,12 +35,6 @@ limitations under the License.
 #include "subprocess.h"
 #include "tempdir.h"
 
-/* FreeBSD does not have HOST_NAME_MAX defined.
- * TODO(jaq): use sysconf() to discover its value. */
-#if !defined(HOST_NAME_MAX) && defined(_POSIX_HOST_NAME_MAX)
-#define HOST_NAME_MAX _POSIX_HOST_NAME_MAX
-#endif
-
 static void usage(char * prog) {
   fprintf(stderr,
           "Usage: %s [options] command [arg [arg] ...]\n\n"
@@ -55,8 +49,6 @@ static void usage(char * prog) {
           " -d       send log messages to stderr as well as syslog.\n"
           " -h       print this help\n", prog);
 }
-
-const char * TEMPLATE = ".XXXXXX";
 
 enum var_kind {
   GAUGE,
@@ -111,35 +103,26 @@ int main(int argc, char ** argv) {
   int debug = 0;
   struct rusage ru;
   struct variable * var_list = NULL, * var;
-  size_t collectd_len, statistics_len, temp_len;
 
   progname = argv[0];
 
   while ((arg = getopt(argc, argv, "+C:f:hd")) > 0) {
     switch (arg) {
     case 'C':
-      collectd_len = strlen(optarg) + 1;
-      collectd_sockname = malloc(collectd_len);
-      if (collectd_sockname == NULL) {
-        perror("Allocating space for collectd_sockname");
+      if (asprintf(&collectd_sockname, "%s", optarg) == -1) {
+        perror("asprintf collectd_sockname");
         exit(EX_OSERR);
       }
-      strncpy(collectd_sockname, optarg, collectd_len);
-      collectd_sockname[collectd_len] = '\0';
       break;
     case 'h':
       usage(progname);
       exit(EXIT_SUCCESS);
       break;
     case 'f':
-      statistics_len = strlen(optarg) + 1;
-      statistics_filename = malloc(statistics_len);
-      if (statistics_filename == NULL) {
-        perror("Allocating space for statistics_filename");
+      if (asprintf(&statistics_filename, "%s", optarg) == -1) {
+        perror("asprintf");
         exit(EX_OSERR);
       }
-      strncpy(statistics_filename, optarg, statistics_len);
-      statistics_filename[statistics_len] = '\0';
       break;
     case 'd':
       debug = LOG_PERROR;
@@ -173,22 +156,18 @@ int main(int argc, char ** argv) {
   gettimeofday(&end_wall_time, NULL);
 
 
-  if (statistics_filename != NULL) {
-    strncpy(statistics_filename, make_tempdir(), statistics_len);
-    strncat(statistics_filename, "/", statistics_len);
-    strncat(statistics_filename, command, statistics_len);
-    strncat(statistics_filename, ".stat", statistics_len);
+  if (statistics_filename == NULL) {
+    if (asprintf(&statistics_filename, "%s/%s.stat", make_tempdir(), command) == -1) {
+      perror("asprintf");
+      exit(EX_OSERR);
+    }
   }
   syslog(LOG_DEBUG, "statistics filename is %s", statistics_filename);
 
-  temp_len = strlen(statistics_filename) + strlen(TEMPLATE) + 1;
-  temp_filename = malloc(temp_len);
-  if (temp_filename == NULL) {
-    perror("Allocation of temp_filename");
+  if (asprintf(&temp_filename, "%s.XXXXXX", statistics_filename) == -1) {
+    perror("asprintf");
     exit(EX_OSERR);
   }
-  strncpy(temp_filename, statistics_filename, temp_len);
-  strncat(temp_filename, TEMPLATE, temp_len - strlen(temp_filename) - 1);
   syslog(LOG_DEBUG, "temp filename is %s", temp_filename);
 
   if ((temp_fd = mkstemp(temp_filename)) < 0) {
@@ -274,7 +253,8 @@ int main(int argc, char ** argv) {
 
   /* Write to collectd */
   if (collectd_sockname != NULL) {
-    char hostname[HOST_NAME_MAX];
+    char * hostname;
+    long hostname_len;
     struct sockaddr_un sock;
     int s;
 
@@ -291,7 +271,16 @@ int main(int argc, char ** argv) {
       goto end;
     }
 
-    gethostname(hostname, HOST_NAME_MAX-1);
+    hostname_len = sysconf(_SC_HOST_NAME_MAX);
+    if (hostname_len <= 0) hostname_len = _POSIX_HOST_NAME_MAX;
+    if ((hostname = malloc(hostname_len)) == NULL) {
+      perror("malloc hostname");
+      exit(EX_OSERR);
+    }
+    if (gethostname(hostname, hostname_len) == -1) {
+      perror("gethostname");
+      exit(EX_OSERR);
+    }
 
     for (var = var_list; var != NULL; var = var->next) {
       char type[10] = {'\0'};

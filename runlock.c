@@ -14,6 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+/* For asprintf */
+#define _GNU_SOURCE
+
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
@@ -29,7 +32,7 @@ limitations under the License.
 #include "subprocess.h"
 #include "tempdir.h"
 
-char lock_filename[PATH_MAX];
+char * lock_filename;
 volatile sig_atomic_t timeout_expired = 0;
 
 static void usage(char * prog) {
@@ -86,8 +89,10 @@ int main(int argc, char ** argv) {
       debug = LOG_PERROR;
       break;
     case 'f':
-      strncat(lock_filename, optarg, PATH_MAX - 1);
-      lock_filename[PATH_MAX-1] = '\0';
+      if (asprintf(&lock_filename, "%s", optarg) == -1) {
+        perror("asprintf");
+        exit(EX_OSERR);
+      }
       break;
     case 't':
       timeout = strtol(optarg, &endptr, 10);
@@ -114,16 +119,11 @@ int main(int argc, char ** argv) {
   else
     setlogmask(LOG_UPTO(LOG_INFO));
 
-  if (lock_filename[0] == '\0') {
-    strncat(lock_filename, make_tempdir(),
-            PATH_MAX - strlen(lock_filename) - 1);
-    strncat(lock_filename, "/",
-            PATH_MAX - strlen(lock_filename) - 1);
-    strncat(lock_filename, command,
-            PATH_MAX - strlen(lock_filename) - 1);
-    strncat(lock_filename, ".pid",
-            PATH_MAX - strlen(lock_filename) - 1);
-    lock_filename[PATH_MAX-1] = '\0';
+  if (lock_filename == NULL) {
+    if (asprintf(&lock_filename, "%s/%s.pid", make_tempdir(), command) == -1) {
+      perror("asprintf");
+      exit(EX_OSERR);
+    }
   }
   syslog(LOG_DEBUG, "lock filename is %s", lock_filename);
 

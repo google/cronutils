@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+#define _GNU_SOURCE /* asprintf */
+
 #include <errno.h>
 #include <limits.h>
 #include <pwd.h>
@@ -30,7 +32,6 @@ limitations under the License.
 
 const char * template = "/tmp/cronutils-";
 char * dirname;
-size_t dirname_len;
 
 char * make_tempdir() {
   uid_t uid;
@@ -42,14 +43,10 @@ char * make_tempdir() {
     perror("getpwuid");
     exit(EX_OSERR);
   }
-  dirname_len = strlen(template) + strlen(pw->pw_name) + 1;
-  dirname = malloc(dirname_len);
-  if (dirname == NULL) {
-    perror("malloc dirname failed");
+  if (asprintf(&dirname, "%s%s", template, pw->pw_name) == -1) {
+    perror("asprintf");
     exit(EX_OSERR);
   }
-  strncpy(dirname, template, dirname_len);
-  strncat(dirname, pw->pw_name, dirname_len);
   syslog(LOG_DEBUG, "temp dir is %s\n", dirname);
   if (mkdir(dirname, S_IRWXU) < 0) {
     if (errno == EEXIST) {
