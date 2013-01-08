@@ -18,19 +18,19 @@ limitations under the License.
 
 #include <libgen.h>
 #include <limits.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/resource.h>
+#include <sys/socket.h>
 #include <sys/time.h>
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/resource.h>
 #include <sys/un.h>
 #include <sysexits.h>
 #include <syslog.h>
 #include <time.h>
 #include <unistd.h>
-#include <stdarg.h>
 
 #include "subprocess.h"
 #include "tempdir.h"
