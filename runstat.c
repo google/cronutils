@@ -89,9 +89,9 @@ void add_variable(struct variable ** var_list, const char * name, const enum var
 int main(int argc, char ** argv) {
   char * progname;
   int arg;
-  char * collectd_sockname;
-  char * statistics_filename;
-  char * temp_filename;
+  char * collectd_sockname = NULL;
+  char * statistics_filename = NULL;
+  char * temp_filename = NULL;
   char * command;
   char ** command_args;
   struct timeval start_wall_time, end_wall_time;

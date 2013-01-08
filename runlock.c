@@ -32,7 +32,7 @@ limitations under the License.
 #include "subprocess.h"
 #include "tempdir.h"
 
-char * lock_filename;
+char * lock_filename = NULL;
 volatile sig_atomic_t timeout_expired = 0;
 
 static void usage(char * prog) {
@@ -77,7 +77,6 @@ int main(int argc, char ** argv) {
   fl.l_whence = SEEK_SET;
 
   progname = argv[0];
-  lock_filename[0] = '\0';
 
   while ((arg = getopt(argc, argv, "+df:ht:")) > 0) {
     switch(arg) {

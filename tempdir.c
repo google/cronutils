@@ -31,7 +31,7 @@ limitations under the License.
 #include "tempdir.h"
 
 const char * template = "/tmp/cronutils-";
-char * dirname;
+char * dirname = NULL;
 
 char * make_tempdir() {
   uid_t uid;
