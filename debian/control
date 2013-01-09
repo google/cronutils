@@ -3,7 +3,7 @@ Section: admin
 Priority: extra
 Maintainer: Jamie Wilkinson <jaq@debian.org>
 Build-Depends: debhelper (>= 7.0.50~)
-Standards-Version: 3.8.4
+Standards-Version: 3.9.4
 Homepage: http://code.google.com/p/cronutils
 
 Package: cronutils
