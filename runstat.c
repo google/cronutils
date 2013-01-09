@@ -240,7 +240,9 @@ int main(int argc, char ** argv) {
              var->value,
              var->units ? var->units : ""
              );
-    write(temp_fd, buf, strlen(buf));
+    if (write(temp_fd, buf, strlen(buf)) == -1) {
+      perror("write");
+    }
  }
 
   fsync(temp_fd);

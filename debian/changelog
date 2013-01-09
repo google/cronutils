@@ -1,8 +1,10 @@
 cronutils (1.4-2) unstable; urgency=low
 
   * Update Standards-Version to 3.9.4.
+  * Bump debian/compat to 9.
+  * Use buildflags.mk in debian/rules to enable hardening flags.
 
- -- Jamie Wilkinson <jaq@debian.org>  Wed, 09 Jan 2013 18:35:37 +1100
+ -- Jamie Wilkinson <jaq@debian.org>  Wed, 09 Jan 2013 19:02:57 +1100
 
 cronutils (1.4-1) unstable; urgency=low
 

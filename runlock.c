@@ -63,7 +63,7 @@ int main(int argc, char ** argv) {
   int arg;
   char * command;
   char ** command_args;
-  int status;
+  int status = 0;
   struct flock fl;
   int fd;
   char buf[BUFSIZ];
@@ -156,7 +156,9 @@ int main(int argc, char ** argv) {
       alarm(0);
       sigaction(SIGALRM, &old_sa, NULL);
       snprintf(buf, BUFSIZ, "%d\n", getpid());
-      write(fd, buf, strlen(buf));
+      if (write(fd, buf, strlen(buf)) == -1) {
+        perror("write");
+      }
       fsync(fd);
       syslog(LOG_DEBUG, "lock granted");
       status = run_subprocess(command, command_args, NULL);
