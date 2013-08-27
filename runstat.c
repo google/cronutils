@@ -196,6 +196,10 @@ int main(int argc, char ** argv) {
   /** timing */
   elapsed_sec = end_run_time.tv_sec - start_run_time.tv_sec;
   elapsed_nsec = end_run_time.tv_nsec - start_run_time.tv_nsec;
+  if (elapsed_nsec < 0) {
+    elapsed_nsec += 1e9;
+    elapsed_sec--;
+  }
   /* GAUGE hostname/runstat-progname/last_run-elapsed-time */
   add_variable(&var_list, "elapsed_time", GAUGE, "s",
                "%ld.%.9ld", elapsed_sec, elapsed_nsec);

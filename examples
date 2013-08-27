@@ -7,3 +7,5 @@
 
 ./runstat -f foo bash -c 'for i in $(seq 1 5); do echo $i; done; exit 5'
 ./runstat -f foo ./runalarm -t 5 /bin/bash -c 'for i in $(seq 1 7); do echo $i; sleep 1; done; echo exited'; cat foo
+
+./runstat -f foo /bin/bash -c 'usleep 4900000'; cat foo
