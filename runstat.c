@@ -14,32 +14,26 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#define _GNU_SOURCE /* dprintf() */
+#define _GNU_SOURCE /* dprintf(), asprintf */
 
 #include <libgen.h>
 #include <limits.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/resource.h>
+#include <sys/socket.h>
 #include <sys/time.h>
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/resource.h>
 #include <sys/un.h>
 #include <sysexits.h>
 #include <syslog.h>
 #include <time.h>
 #include <unistd.h>
-#include <stdarg.h>
 
 #include "subprocess.h"
 #include "tempdir.h"
-
-/* FreeBSD does not have HOST_NAME_MAX defined.
- * TODO(jaq): use sysconf() to discover its value. */
-#if !defined(HOST_NAME_MAX) && defined(_POSIX_HOST_NAME_MAX)
-#define HOST_NAME_MAX _POSIX_HOST_NAME_MAX
-#endif
 
 static void usage(char * prog) {
   fprintf(stderr,
@@ -55,8 +49,6 @@ static void usage(char * prog) {
           " -d       send log messages to stderr as well as syslog.\n"
           " -h       print this help\n", prog);
 }
-
-const char * TEMPLATE = ".XXXXXX";
 
 enum var_kind {
   GAUGE,
@@ -97,9 +89,9 @@ void add_variable(struct variable ** var_list, const char * name, const enum var
 int main(int argc, char ** argv) {
   char * progname;
   int arg;
-  char collectd_sockname[PATH_MAX] = {'\0'};
-  char statistics_filename[PATH_MAX] = {'\0'};
-  char temp_filename[PATH_MAX] = {'\0'};
+  char * collectd_sockname = NULL;
+  char * statistics_filename = NULL;
+  char * temp_filename = NULL;
   char * command;
   char ** command_args;
   struct timeval start_wall_time, end_wall_time;
@@ -117,16 +109,20 @@ int main(int argc, char ** argv) {
   while ((arg = getopt(argc, argv, "+C:f:hd")) > 0) {
     switch (arg) {
     case 'C':
-      strncat(collectd_sockname, optarg, PATH_MAX - 1);
-      collectd_sockname[PATH_MAX-1] = '\0';
+      if (asprintf(&collectd_sockname, "%s", optarg) == -1) {
+        perror("asprintf collectd_sockname");
+        exit(EX_OSERR);
+      }
       break;
     case 'h':
       usage(progname);
       exit(EXIT_SUCCESS);
       break;
     case 'f':
-      strncat(statistics_filename, optarg, PATH_MAX - 1);
-      statistics_filename[PATH_MAX-1] = '\0';
+      if (asprintf(&statistics_filename, "%s", optarg) == -1) {
+        perror("asprintf");
+        exit(EX_OSERR);
+      }
       break;
     case 'd':
       debug = LOG_PERROR;
@@ -160,21 +156,18 @@ int main(int argc, char ** argv) {
   gettimeofday(&end_wall_time, NULL);
 
 
-  if (statistics_filename[0] == '\0') {
-    strncat(statistics_filename, make_tempdir(),
-            PATH_MAX - strlen(statistics_filename) - 1);
-    strncat(statistics_filename, "/",
-            PATH_MAX - strlen(statistics_filename) - 1);
-    strncat(statistics_filename, command,
-            PATH_MAX - strlen(statistics_filename) - 1);
-    strncat(statistics_filename, ".stat",
-            PATH_MAX - strlen(statistics_filename) - 1);
-    statistics_filename[PATH_MAX-1] = '\0';
+  if (statistics_filename == NULL) {
+    if (asprintf(&statistics_filename, "%s/%s.stat", make_tempdir(), command) == -1) {
+      perror("asprintf");
+      exit(EX_OSERR);
+    }
   }
   syslog(LOG_DEBUG, "statistics filename is %s", statistics_filename);
 
-  strncat(temp_filename, statistics_filename, PATH_MAX - 1);
-  strncat(temp_filename, TEMPLATE, PATH_MAX - strlen(temp_filename) - 1);
+  if (asprintf(&temp_filename, "%s.XXXXXX", statistics_filename) == -1) {
+    perror("asprintf");
+    exit(EX_OSERR);
+  }
   syslog(LOG_DEBUG, "temp filename is %s", temp_filename);
 
   if ((temp_fd = mkstemp(temp_filename)) < 0) {
@@ -251,7 +244,9 @@ int main(int argc, char ** argv) {
              var->value,
              var->units ? var->units : ""
              );
-    write(temp_fd, buf, strlen(buf));
+    if (write(temp_fd, buf, strlen(buf)) == -1) {
+      perror("write");
+    }
  }
 
   fsync(temp_fd);
@@ -263,8 +258,9 @@ int main(int argc, char ** argv) {
   }
 
   /* Write to collectd */
-  if (collectd_sockname[0] != '\0') {
-    char hostname[HOST_NAME_MAX];
+  if (collectd_sockname != NULL) {
+    char * hostname;
+    long hostname_len;
     struct sockaddr_un sock;
     int s;
 
@@ -281,7 +277,16 @@ int main(int argc, char ** argv) {
       goto end;
     }
 
-    gethostname(hostname, HOST_NAME_MAX-1);
+    hostname_len = sysconf(_SC_HOST_NAME_MAX);
+    if (hostname_len <= 0) hostname_len = _POSIX_HOST_NAME_MAX;
+    if ((hostname = malloc(hostname_len)) == NULL) {
+      perror("malloc hostname");
+      exit(EX_OSERR);
+    }
+    if (gethostname(hostname, hostname_len) == -1) {
+      perror("gethostname");
+      exit(EX_OSERR);
+    }
 
     for (var = var_list; var != NULL; var = var->next) {
       char type[10] = {'\0'};

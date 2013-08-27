@@ -9,6 +9,9 @@
 # Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 export DH_ALWAYS_EXCLUDE=.hg
+DPKG_EXPORT_BUILDFLAGS=1
+# buildflags hardening
+include /usr/share/dpkg/buildflags.mk
 
 %:
 	dh  $@

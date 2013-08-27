@@ -2,8 +2,8 @@ Source: cronutils
 Section: admin
 Priority: extra
 Maintainer: Jamie Wilkinson <jaq@debian.org>
-Build-Depends: debhelper (>= 7.0.50~)
-Standards-Version: 3.8.4
+Build-Depends: debhelper (>= 9), dpkg-dev (>= 1.16.1~)
+Standards-Version: 3.9.2
 Homepage: http://code.google.com/p/cronutils
 
 Package: cronutils
