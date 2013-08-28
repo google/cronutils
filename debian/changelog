@@ -1,6 +1,7 @@
 cronutils (1.5-1) unstable; urgency=low
 
   * New upstream release. 
+  * Update standards version.
 
  -- Jamie Wilkinson <jaq@debian.org>  Wed, 28 Aug 2013 07:10:36 +1000
 
