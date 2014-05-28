@@ -1,3 +1,9 @@
+cronutils (1.5-3) unstable; urgency=medium
+
+  * Update the hardening build flags in debian/rules for debhelper 9.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Wed, 28 May 2014 18:20:32 +1000
+
 cronutils (1.5-2) unstable; urgency=medium
 
   * Add VCS fields to the control file. 
