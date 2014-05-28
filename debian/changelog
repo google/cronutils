@@ -2,6 +2,7 @@ cronutils (1.5-2) UNRELEASED; urgency=medium
 
   * Add VCS fields to the control file. 
   * Update debian/watch to github format. 
+  * Update standards version to 3.9.5. 
 
  -- Jamie Wilkinson <jaq@debian.org>  Wed, 28 May 2014 17:40:00 +1000
 
