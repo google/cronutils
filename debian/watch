@@ -1,2 +1,2 @@
 version=3
-http://code.google.com/p/cronutils/downloads/list .*/cronutils-(.*)\.tar\.gz debian
+https://github.com/google/cronutils/tags .*/(\d[\d\.]*)\.tar\.gz
