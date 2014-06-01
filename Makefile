@@ -52,4 +52,4 @@ dist:
 test:
 	./regtest.sh
 
-.PHONY: dist clean install distclean
+.PHONY: dist clean install distclean test
