@@ -1,3 +1,19 @@
+cronutils (1.5-3) unstable; urgency=medium
+
+  * Update the hardening build flags in debian/rules for debhelper 9.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Wed, 28 May 2014 18:20:32 +1000
+
+cronutils (1.5-2) unstable; urgency=medium
+
+  * Add VCS fields to the control file. 
+  * Update debian/watch to github format, after upstream move.
+  * Update standards version to 3.9.5. 
+  * Convert debian/copyright to the DEP5 machine readable format. 
+  * Add debian/gbp.conf to configure git-buildpackage for the VCS. 
+
+ -- Jamie Wilkinson <jaq@debian.org>  Wed, 28 May 2014 18:03:07 +1000
+
 cronutils (1.5-1) unstable; urgency=low
 
   * New upstream release. 

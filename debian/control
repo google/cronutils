@@ -3,8 +3,10 @@ Section: admin
 Priority: extra
 Maintainer: Jamie Wilkinson <jaq@debian.org>
 Build-Depends: debhelper (>= 9), dpkg-dev (>= 1.16.1~)
-Standards-Version: 3.9.4
+Standards-Version: 3.9.5
 Homepage: http://code.google.com/p/cronutils
+VCS-Browser: https://github.com/google/cronutils/tree/debian
+VCS-Git: https://github.com/google/cronutils.git -b debian
 
 Package: cronutils
 Architecture: any
