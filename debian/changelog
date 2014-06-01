@@ -1,3 +1,9 @@
+cronutils (1.6-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Jamie Wilkinson <jaq@debian.org>  Sun, 01 Jun 2014 13:23:33 +1000
+
 cronutils (1.5-3) unstable; urgency=medium
 
   * Update the hardening build flags in debian/rules for debhelper 9.
