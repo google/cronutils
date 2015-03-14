@@ -1,3 +1,11 @@
+cronutils (1.7-3~1.gbpba9ec0) UNRELEASED; urgency=medium
+
+  ** SNAPSHOT build @ba9ec02cf6c733b2de18214f58b37fcf64cdfa03 **
+
+  * UNRELEASED
+
+ -- Jamie Wilkinson <jaq@debian.org>  Sat, 14 Mar 2015 21:55:48 +1100
+
 cronutils (1.7-2) unstable; urgency=medium
 
   * Change printf specifier to correctly handle unsigned int.  (Closes: #777828)# 
