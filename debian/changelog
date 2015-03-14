@@ -1,3 +1,9 @@
+cronutils (1.7-2) unstable; urgency=medium
+
+  * Change printf specifier to correctly handle unsigned int.  (Closes: #777828)# 
+
+ -- Jamie Wilkinson <jaq@debian.org>  Sat, 14 Mar 2015 21:50:15 +1100
+
 cronutils (1.7-1) unstable; urgency=medium
 
   * New upstream release. 

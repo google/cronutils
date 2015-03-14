@@ -63,7 +63,7 @@ char * make_tempdir() {
         exit(EXIT_FAILURE);
       }
       if (!(st.st_mode & S_IRWXU)) {
-        syslog(LOG_ERR, "%s has insecure permissions %d\n",
+        syslog(LOG_ERR, "%s has insecure permissions %u\n",
                dirname, st.st_mode);
         exit(EXIT_FAILURE);
       }
