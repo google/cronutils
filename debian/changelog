@@ -1,3 +1,9 @@
+cronutils (1.7-1) UNRELEASED; urgency=medium
+
+  * New upstream release. 
+
+ -- Jamie Wilkinson <jaq@debian.org>  Sat, 14 Mar 2015 21:40:09 +1100
+
 cronutils (1.6-1) unstable; urgency=low
 
   * New upstream release.
