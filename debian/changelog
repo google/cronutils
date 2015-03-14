@@ -1,6 +1,7 @@
 cronutils (1.7-1) unstable; urgency=medium
 
   * New upstream release. 
+  * Bump standards-version to 3.9.6.
 
  -- Jamie Wilkinson <jaq@debian.org>  Sat, 14 Mar 2015 21:40:30 +1100
 
