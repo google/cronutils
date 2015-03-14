@@ -139,7 +139,7 @@ int main(int argc, char ** argv) {
       switch (errno) {
       case EINTR:
         if (timeout_expired) {
-          syslog(LOG_INFO, "waited 5 seconds, already locked by another process");
+          syslog(LOG_INFO, "waited %d seconds, already locked by another process", timeout);
           exit(EX_CANTCREAT);
         }
         break;
