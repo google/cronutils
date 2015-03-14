@@ -23,7 +23,7 @@ runstat: runstat.c subprocess.c tempdir.c
 CFLAGS+=-Wall -Werror -Wextra -D_XOPEN_SOURCE=500 -g -ansi -pedantic-errors -Wwrite-strings -Wcast-align -Wcast-qual -Winit-self -Wformat=2 -Wuninitialized -Wmissing-declarations -Wpointer-arith -Wstrict-aliasing -fstrict-aliasing
 LDLIBS+=-lrt
 
-SOURCES = runalarm.c runlock.c runstat.c subprocess.c subprocess.h tempdir.c tempdir.h Makefile runalarm.1 runlock.1 runstat.1 version examples cronutils.spec runcron
+SOURCES = runalarm.c runlock.c runstat.c subprocess.c subprocess.h tempdir.c tempdir.h Makefile runalarm.1 runlock.1 runstat.1 version examples cronutils.spec runcron regtest.sh tests
 
 prefix = usr/local
 BINDIR = $(prefix)/bin
@@ -44,7 +44,7 @@ distclean: clean
 dist:
 	rm -rf cronutils-$(VERSION) cronutils-$(VERSION).tar cronutils-$(VERSION).tar.gz
 	mkdir cronutils-$(VERSION)
-	cp $(SOURCES) cronutils-$(VERSION)
+	cp -r $(SOURCES) cronutils-$(VERSION)
 	tar cf cronutils-$(VERSION).tar cronutils-$(VERSION)
 	gzip -9 cronutils-$(VERSION).tar
 	rm -rf cronutils-$(VERSION)
