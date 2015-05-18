@@ -49,7 +49,7 @@ dist:
 	gzip -9 cronutils-$(VERSION).tar
 	rm -rf cronutils-$(VERSION)
 
-test:
+test: all
 	./regtest.sh
 
 .PHONY: dist clean install distclean test
