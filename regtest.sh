@@ -1,5 +1,5 @@
 #!/bin/sh
-
+set -x
 SRCDIR=$(cd -P -- $(dirname -- "$0") && pwd -P)
 TESTDIR=$SRCDIR/tests
 TEMPDIR=$(mktemp -t -d cronutils.regtest-XXXXXX)
