@@ -301,11 +301,11 @@ int main(int argc, char ** argv) {
         perror("unknown var->kind");
         break;
       }
-      dprintf(s, "PUTVAL \"%s/runstat-%s/%s-%s\" %ld:%s\n",
+      dprintf(s, "PUTVAL \"%s/runstat-%s/%s-%s\" %.0g:%s\n",
               hostname,
               basename(command),
               type, var->name,
-              end_wall_time.tv_sec,
+              difftime(end_wall_time.tv_sec, 0),
               var->value);
       /* This next line is a bit of a hack to clear the pipe.*/
       recv(s, buf, sizeof(buf) - 1, 0);
