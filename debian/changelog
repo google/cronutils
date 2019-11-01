@@ -1,3 +1,9 @@
+cronutils (1.9-2) UNRELEASED; urgency=medium
+
+  * Trim trailing whitespace.
+
+ -- Debian Janitor <janitor@jelmer.uk>  Fri, 01 Nov 2019 02:59:32 +0000
+
 cronutils (1.9-1) unstable; urgency=medium
 
   * New upstream release.
@@ -12,7 +18,7 @@ cronutils (1.8-1) unstable; urgency=medium
 
 cronutils (1.7-1) unstable; urgency=medium
 
-  * New upstream release. 
+  * New upstream release.
   * Bump standards-version to 3.9.6.
 
  -- Jamie Wilkinson <jaq@debian.org>  Sat, 14 Mar 2015 21:40:30 +1100
@@ -31,24 +37,24 @@ cronutils (1.5-3) unstable; urgency=medium
 
 cronutils (1.5-2) unstable; urgency=medium
 
-  * Add VCS fields to the control file. 
+  * Add VCS fields to the control file.
   * Update debian/watch to github format, after upstream move.
-  * Update standards version to 3.9.5. 
-  * Convert debian/copyright to the DEP5 machine readable format. 
-  * Add debian/gbp.conf to configure git-buildpackage for the VCS. 
+  * Update standards version to 3.9.5.
+  * Convert debian/copyright to the DEP5 machine readable format.
+  * Add debian/gbp.conf to configure git-buildpackage for the VCS.
 
  -- Jamie Wilkinson <jaq@debian.org>  Wed, 28 May 2014 18:03:07 +1000
 
 cronutils (1.5-1) unstable; urgency=low
 
-  * New upstream release. 
+  * New upstream release.
   * Update standards version.
 
  -- Jamie Wilkinson <jaq@debian.org>  Wed, 28 Aug 2013 07:10:36 +1000
 
 cronutils (1.4-3) unstable; urgency=low
 
-  * Fix build dependency on dpkg-dev. 
+  * Fix build dependency on dpkg-dev.
 
  -- Jamie Wilkinson <jaq@debian.org>  Wed, 09 Jan 2013 10:11:00 +0000
 
@@ -62,20 +68,20 @@ cronutils (1.4-2) unstable; urgency=low
 
 cronutils (1.4-1) unstable; urgency=low
 
-  * New upstream release. 
+  * New upstream release.
 
  -- Jamie Wilkinson <jaq@debian.org>  Tue, 08 Jan 2013 11:18:55 +0000
 
 cronutils (1.3.1-1) unstable; urgency=low
 
-  * New upstream release. 
+  * New upstream release.
 
  -- Jamie Wilkinson <jaq@debian.org>  Mon, 07 Jan 2013 22:26:39 +0000
 
 cronutils (1.3-1) unstable; urgency=low
 
-  * New upstream release. 
-  * Updated watch file. 
+  * New upstream release.
+  * Updated watch file.
 
  -- Jamie Wilkinson <jaq@debian.org>  Mon, 07 Jan 2013 17:31:09 +0000
 
@@ -101,7 +107,7 @@ cronutils (1.1-2) unstable; urgency=low
 
 cronutils (1.1-1) unstable; urgency=low
 
-  * New upstream release. 
+  * New upstream release.
 
  -- Jamie Wilkinson <jaq@debian.org>  Sun, 24 Jul 2011 00:29:00 +1000
 
