@@ -1,7 +1,7 @@
 cronutils - utilities to assist running batch processing jobs
 =============================================================
 
-[![Build Status](https://travis-ci.org/google/cronutils.svg?branch=master)](https://travis-ci.org/google/cronutils)
+![ci](https://github.com/google/cronutils/workflows/CI/badge.svg)
 
 cronutils is a set of tools to assist the reliable running of periodic and batch jobs.
 
