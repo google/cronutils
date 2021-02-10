@@ -129,7 +129,7 @@ int run_subprocess(char * command, char ** args, void (*pre_wait_function)(void)
     alarm(0);
     if (pid > 0) {
       if (pid != childpid) {
-        syslog(LOG_ERR, "childpid %d not retured by waitpid! instead %d",
+        syslog(LOG_ERR, "childpid %d not returned by waitpid! instead %d",
                childpid, pid);
         kill_process_group();
         exit(EX_OSERR);
