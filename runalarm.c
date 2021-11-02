@@ -14,6 +14,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+#define _GNU_SOURCE /* basename */
+
 #include <errno.h>
 #include <signal.h>
 #include <stdio.h>
@@ -109,7 +111,7 @@ int main(int argc, char ** argv) {
   status = run_subprocess(command, command_args, &set_timeout_alarm);
   alarm(0); /* shutdown the alarm */
   if (alarm_triggered) {
-    syslog(LOG_INFO, "command '%s' timed out after %d seconds", command,
+    syslog(LOG_INFO, "command '%s' timed out after %d seconds", basename(command),
            timeout);
     status = 128 + SIGALRM;
   }
