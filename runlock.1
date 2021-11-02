@@ -16,7 +16,7 @@ runlock \- prevent concurrent execution of a process
 \fBrunlock\fR tries to hold an exclusive lock while it executes a
 command. Subsequent execution of \fBrunlock\fR with the same lock,
 while that lock is held, will cause the new instance of \fBrunlock\fR
-to terminate with a faliure exit code. Otherwise, the exit code of the
+to terminate with a failure exit code. Otherwise, the exit code of the
 subprocess is returned.
 
 .SH USAGE
