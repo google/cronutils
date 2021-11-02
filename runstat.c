@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-#define _GNU_SOURCE /* dprintf(), asprintf */
+#define _GNU_SOURCE /* dprintf, asprintf, basename */
 
 #include <libgen.h>
 #include <limits.h>
@@ -94,6 +94,7 @@ int main(int argc, char ** argv) {
   char * temp_filename = NULL;
   char * command;
   char ** command_args;
+  char * command_base;
   struct timeval start_wall_time, end_wall_time;
   struct timespec start_run_time, end_run_time;
   long int elapsed_sec, elapsed_nsec;
@@ -155,9 +156,9 @@ int main(int argc, char ** argv) {
   clock_gettime(CLOCK_MONOTONIC, &end_run_time);
   gettimeofday(&end_wall_time, NULL);
 
-
+  command_base = basename(command);
   if (statistics_filename == NULL) {
-    if (asprintf(&statistics_filename, "%s/%s.stat", make_tempdir(), command) == -1) {
+    if (asprintf(&statistics_filename, "%s/%s.stat", make_tempdir(), command_base) == -1) {
       perror("asprintf");
       exit(EX_OSERR);
     }
@@ -239,7 +240,7 @@ int main(int argc, char ** argv) {
   /* CSV emitter */
   for (var = var_list; var != NULL; var = var->next) {
     snprintf(buf, sizeof(buf), "%s,%s,%s,%s\n",
-             command,
+             basename(command),
              var->name,
              var->value,
              var->units ? var->units : ""
@@ -303,7 +304,7 @@ int main(int argc, char ** argv) {
       }
       dprintf(s, "PUTVAL \"%s/runstat-%s/%s-%s\" %.0g:%s\n",
               hostname,
-              basename(command),
+              command_base,
               type, var->name,
               difftime(end_wall_time.tv_sec, 0),
               var->value);

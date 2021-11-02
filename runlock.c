@@ -14,8 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-/* For asprintf */
-#define _GNU_SOURCE
+#define _GNU_SOURCE /* asprintf, basename */
 
 #include <errno.h>
 #include <fcntl.h>
@@ -119,7 +118,7 @@ int main(int argc, char ** argv) {
     setlogmask(LOG_UPTO(LOG_INFO));
 
   if (lock_filename == NULL) {
-    if (asprintf(&lock_filename, "%s/%s.pid", make_tempdir(), command) == -1) {
+    if (asprintf(&lock_filename, "%s/%s.pid", make_tempdir(), basename(command)) == -1) {
       perror("asprintf");
       exit(EX_OSERR);
     }
