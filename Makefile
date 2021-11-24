@@ -49,7 +49,10 @@ dist:
 	gzip -9 cronutils-$(VERSION).tar
 	rm -rf cronutils-$(VERSION)
 
+test: CFLAGS += -O0 -g --coverage
+test: LDFLAGS += --coverage
 test: all
 	./regtest.sh
+	gcov --all-blocks --branch-probabilities --branch-counts --function-summaries --unconditional-branches *.gcda
 
 .PHONY: dist clean install distclean test
