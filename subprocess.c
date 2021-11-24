@@ -14,19 +14,19 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
+#include "subprocess.h"
+
 #include <errno.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sysexits.h>
-#include <syslog.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sysexits.h>
+#include <syslog.h>
 #include <unistd.h>
 
-#include "subprocess.h"
-
-int childpid = -1;  /* default to a bogus pid */
+int childpid = -1; /* default to a bogus pid */
 volatile sig_atomic_t killed_by_us = 0;
 volatile sig_atomic_t fatal_error_in_progress = 0;
 
@@ -72,17 +72,15 @@ void install_termination_handler(void) {
   sigaddset(&sa.sa_mask, SIGQUIT);
   sa.sa_flags = 0;
   sigaction(SIGINT, NULL, &old_sa);
-  if (old_sa.sa_handler != SIG_IGN)
-    sigaction(SIGINT, &sa, NULL);
+  if (old_sa.sa_handler != SIG_IGN) sigaction(SIGINT, &sa, NULL);
   sigaction(SIGHUP, NULL, &old_sa);
-  if (old_sa.sa_handler != SIG_IGN)
-    sigaction(SIGHUP, &sa, NULL);
+  if (old_sa.sa_handler != SIG_IGN) sigaction(SIGHUP, &sa, NULL);
   sigaction(SIGTERM, NULL, &old_sa);
-  if (old_sa.sa_handler != SIG_IGN)
-    sigaction(SIGTERM, &sa, NULL);
+  if (old_sa.sa_handler != SIG_IGN) sigaction(SIGTERM, &sa, NULL);
 }
 
-int run_subprocess(char * command, char ** args, void (*pre_wait_function)(void)) {
+int run_subprocess(char* command, char** args,
+                   void (*pre_wait_function)(void)) {
   int pid;
   int status;
 
@@ -143,8 +141,7 @@ int run_subprocess(char * command, char ** args, void (*pre_wait_function)(void)
       } else {
         /* This formula is a Unix shell convention */
         status = 128 + WTERMSIG(status);
-        syslog(LOG_DEBUG, "child exited via signal %d",
-               WTERMSIG(status));
+        syslog(LOG_DEBUG, "child exited via signal %d", WTERMSIG(status));
       }
     }
     childpid = -1;

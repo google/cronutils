@@ -31,37 +31,37 @@ limitations under the License.
 #include "subprocess.h"
 #include "tempdir.h"
 
-char * lock_filename = NULL;
+char* lock_filename = NULL;
 volatile sig_atomic_t timeout_expired = 0;
 
-static void usage(char * prog) {
+static void usage(char* prog) {
   fprintf(stderr,
           "Usage: %s [options] command [arg [arg] ...]\n\n"
           "This program prevents concurrent execution of a process\n"
           "by holding an exclusive lock while the subprocess is running.\n"
           "Subsequent attempts to run a process with the same lock,\n"
           "while another process has the lock open, and is still\n"
-          "executing, will exit with a failure exit code.\n", prog);
+          "executing, will exit with a failure exit code.\n",
+          prog);
   fprintf(stderr,
           "\noptions:\n"
           " -d       send log messages to stderr as well as syslog.\n"
           " -f lock_filename path to use as a lock file\n"
           " -t timeout  time in seconds to wait to acquire the lock\n"
-          " -h       this help.\n"
-          );
+          " -h       this help.\n");
 }
 
 static void alarm_handler(int signum);
 static void alarm_handler(int signum) {
-  (void) signum; /* suppress unused variable warning */
+  (void)signum; /* suppress unused variable warning */
   timeout_expired = 1;
 }
 
-int main(int argc, char ** argv) {
-  char * progname;
+int main(int argc, char** argv) {
+  char* progname;
   int arg;
-  char * command;
-  char ** command_args;
+  char* command;
+  char** command_args;
   int status = 0;
   struct flock fl;
   int fd;
@@ -69,7 +69,7 @@ int main(int argc, char ** argv) {
   struct sigaction sa, old_sa;
   int debug = 0;
   int timeout = 5;
-  char * endptr;
+  char* endptr;
 
   memset(&fl, 0, sizeof(fl));
   fl.l_type = F_WRLCK;
@@ -78,29 +78,29 @@ int main(int argc, char ** argv) {
   progname = argv[0];
 
   while ((arg = getopt(argc, argv, "+df:ht:")) > 0) {
-    switch(arg) {
-    case 'h':
-      usage(progname);
-      exit(EXIT_SUCCESS);
-      break;
-    case 'd':
-      debug = LOG_PERROR;
-      break;
-    case 'f':
-      if (asprintf(&lock_filename, "%s", optarg) == -1) {
-        perror("asprintf");
-        exit(EX_OSERR);
-      }
-      break;
-    case 't':
-      timeout = strtol(optarg, &endptr, 10);
-      if (*endptr || !optarg) {
-        fprintf(stderr, "invalid timeout specified: %s\n", optarg);
-        exit(EX_DATAERR);
-      }
-      break;
-    default:
-      break;
+    switch (arg) {
+      case 'h':
+        usage(progname);
+        exit(EXIT_SUCCESS);
+        break;
+      case 'd':
+        debug = LOG_PERROR;
+        break;
+      case 'f':
+        if (asprintf(&lock_filename, "%s", optarg) == -1) {
+          perror("asprintf");
+          exit(EX_OSERR);
+        }
+        break;
+      case 't':
+        timeout = strtol(optarg, &endptr, 10);
+        if (*endptr || !optarg) {
+          fprintf(stderr, "invalid timeout specified: %s\n", optarg);
+          exit(EX_DATAERR);
+        }
+        break;
+      default:
+        break;
     }
   }
   if (optind >= argc) {
@@ -111,14 +111,15 @@ int main(int argc, char ** argv) {
     command_args = &argv[optind];
   }
 
-  openlog(progname, debug|LOG_ODELAY|LOG_PID|LOG_NOWAIT, LOG_CRON);
+  openlog(progname, debug | LOG_ODELAY | LOG_PID | LOG_NOWAIT, LOG_CRON);
   if (debug)
     setlogmask(LOG_UPTO(LOG_DEBUG));
   else
     setlogmask(LOG_UPTO(LOG_INFO));
 
   if (lock_filename == NULL) {
-    if (asprintf(&lock_filename, "%s/%s.pid", make_tempdir(), basename(command)) == -1) {
+    if (asprintf(&lock_filename, "%s/%s.pid", make_tempdir(),
+                 basename(command)) == -1) {
       perror("asprintf");
       exit(EX_OSERR);
     }
@@ -130,26 +131,29 @@ int main(int argc, char ** argv) {
   sa.sa_flags = 0;
   sigaction(SIGALRM, &sa, &old_sa);
   alarm(timeout);
-  if ((fd = open(lock_filename, O_CREAT|O_RDWR|O_TRUNC, S_IRUSR|S_IWUSR)) < 0) {
+  if ((fd = open(lock_filename, O_CREAT | O_RDWR | O_TRUNC,
+                 S_IRUSR | S_IWUSR)) < 0) {
     perror(lock_filename);
     exit(EX_NOINPUT);
   } else {
     if (fcntl(fd, F_SETLKW, &fl) < 0) {
       switch (errno) {
-      case EINTR:
-        if (timeout_expired) {
-          syslog(LOG_INFO, "waited %d seconds, already locked by another process", timeout);
+        case EINTR:
+          if (timeout_expired) {
+            syslog(LOG_INFO,
+                   "waited %d seconds, already locked by another process",
+                   timeout);
+            exit(EX_CANTCREAT);
+          }
+          break;
+        case EACCES:
+        case EAGAIN:
+          syslog(LOG_INFO, "already locked by another process");
           exit(EX_CANTCREAT);
-        }
-        break;
-      case EACCES:
-      case EAGAIN:
-        syslog(LOG_INFO, "already locked by another process");
-        exit(EX_CANTCREAT);
-        break;
-      default:
-        perror("fcntl");
-        exit(EXIT_FAILURE);
+          break;
+        default:
+          perror("fcntl");
+          exit(EXIT_FAILURE);
       }
     } else {
       alarm(0);
