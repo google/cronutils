@@ -7,3 +7,6 @@ debian/cronutils.debhelper.log
 debian/files
 debian/patches
 .pc
+/*.gcov
+/*.gcda
+/*.gcno
