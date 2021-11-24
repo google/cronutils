@@ -30,7 +30,7 @@ limitations under the License.
 int timeout = 60 * 60 * 24; /* 1 day */
 volatile sig_atomic_t alarm_triggered = 0;
 
-static void usage(char * prog) {
+static void usage(char* prog) {
   fprintf(stderr,
           "Usage: %s [options] command [arg [arg...]]\n\n"
           "This program tries to run a command and, if the timeout is\n"
@@ -39,30 +39,29 @@ static void usage(char * prog) {
           "\noptions:\n"
           " -t timeout  time in seconds to wait before process is killed\n"
           " -d   send log messages to stderr as well as syslog.\n"
-          " -h   print this help\n", prog);
- }
+          " -h   print this help\n",
+          prog);
+}
 
 static void alarm_handler(int signum) {
   int old_errno;
 
-  (void) signum; /* suppress unused parameter warnings */
+  (void)signum; /* suppress unused parameter warnings */
   old_errno = errno;
   alarm_triggered = 1;
   kill_process_group();
   errno = old_errno;
 }
 
-static void set_timeout_alarm(void) {
-  alarm(timeout);
-}
+static void set_timeout_alarm(void) { alarm(timeout); }
 
-int main(int argc, char ** argv) {
+int main(int argc, char** argv) {
   int arg;
-  char * progname;
+  char* progname;
   int status = -1;
-  char * command;
-  char ** command_args;
-  char * endptr;
+  char* command;
+  char** command_args;
+  char* endptr;
   struct sigaction sa, old_sa;
   int debug = 0;
 
@@ -70,22 +69,22 @@ int main(int argc, char ** argv) {
 
   while ((arg = getopt(argc, argv, "+t:hd")) > 0) {
     switch (arg) {
-    case 'h':
-      usage(progname);
-      exit(EXIT_SUCCESS);
-      break;
-    case 't':
-      timeout = strtol(optarg, &endptr, 10);
-      if (*endptr || !optarg) {
-        fprintf(stderr, "invalid timeout specified: %s\n", optarg);
-        exit(EX_DATAERR);
-      }
-      break;
-    case 'd':
-      debug = LOG_PERROR;
-      break;
-    default:
-      break;
+      case 'h':
+        usage(progname);
+        exit(EXIT_SUCCESS);
+        break;
+      case 't':
+        timeout = strtol(optarg, &endptr, 10);
+        if (*endptr || !optarg) {
+          fprintf(stderr, "invalid timeout specified: %s\n", optarg);
+          exit(EX_DATAERR);
+        }
+        break;
+      case 'd':
+        debug = LOG_PERROR;
+        break;
+      default:
+        break;
     }
   }
   if (optind >= argc) {
@@ -96,7 +95,7 @@ int main(int argc, char ** argv) {
     command_args = &argv[optind];
   }
 
-  openlog(progname, debug|LOG_ODELAY|LOG_PID|LOG_NOWAIT, LOG_CRON);
+  openlog(progname, debug | LOG_ODELAY | LOG_PID | LOG_NOWAIT, LOG_CRON);
   if (debug)
     setlogmask(LOG_UPTO(LOG_DEBUG));
   else
@@ -111,8 +110,8 @@ int main(int argc, char ** argv) {
   status = run_subprocess(command, command_args, &set_timeout_alarm);
   alarm(0); /* shutdown the alarm */
   if (alarm_triggered) {
-    syslog(LOG_INFO, "command '%s' timed out after %d seconds", basename(command),
-           timeout);
+    syslog(LOG_INFO, "command '%s' timed out after %d seconds",
+           basename(command), timeout);
     status = 128 + SIGALRM;
   }
   closelog();

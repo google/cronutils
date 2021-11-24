@@ -16,6 +16,8 @@ limitations under the License.
 
 #define _GNU_SOURCE /* asprintf */
 
+#include "tempdir.h"
+
 #include <errno.h>
 #include <limits.h>
 #include <pwd.h>
@@ -28,14 +30,12 @@ limitations under the License.
 #include <syslog.h>
 #include <unistd.h>
 
-#include "tempdir.h"
+const char* template = "/tmp/cronutils-";
+char* dirname = NULL;
 
-const char * template = "/tmp/cronutils-";
-char * dirname = NULL;
-
-char * make_tempdir() {
+char* make_tempdir() {
   uid_t uid;
-  struct passwd * pw;
+  struct passwd* pw;
   struct stat st;
 
   uid = geteuid();
@@ -63,8 +63,8 @@ char * make_tempdir() {
         exit(EXIT_FAILURE);
       }
       if (!(st.st_mode & S_IRWXU)) {
-        syslog(LOG_ERR, "%s has insecure permissions %u\n",
-               dirname, st.st_mode);
+        syslog(LOG_ERR, "%s has insecure permissions %u\n", dirname,
+               st.st_mode);
         exit(EXIT_FAILURE);
       }
     } else {
