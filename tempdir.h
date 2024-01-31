@@ -17,6 +17,6 @@ limitations under the License.
 #ifndef __CRONUTILS_TEMPDIR_H__
 #define __CRONUTILS_TEMPDIR_H__
 
-char* make_tempdir();
+char* make_tempdir(void);
 
 #endif /* __CRONUTILS_TEMPDIR_H__ */
