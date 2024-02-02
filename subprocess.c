@@ -30,7 +30,7 @@ int childpid = -1; /* default to a bogus pid */
 volatile sig_atomic_t killed_by_us = 0;
 volatile sig_atomic_t fatal_error_in_progress = 0;
 
-void kill_process_group() {
+void kill_process_group(void) {
   int pgid;
 
   killed_by_us = 1;

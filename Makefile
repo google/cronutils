@@ -21,7 +21,6 @@ runlock: runlock.c subprocess.c tempdir.c
 runstat: runstat.c subprocess.c tempdir.c
 
 CFLAGS+=-Wall -Werror -Wextra -D_XOPEN_SOURCE=500 -g -ansi -pedantic-errors -Wwrite-strings -Wcast-align -Wcast-qual -Winit-self -Wformat=2 -Wuninitialized -Wmissing-declarations -Wpointer-arith -Wstrict-aliasing -fstrict-aliasing
-LDLIBS+=-lrt
 
 SOURCES = runalarm.c runlock.c runstat.c subprocess.c subprocess.h tempdir.c tempdir.h Makefile runalarm.1 runlock.1 runstat.1 version examples cronutils.spec runcron regtest.sh tests
 

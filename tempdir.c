@@ -33,7 +33,7 @@ limitations under the License.
 const char* template = "/tmp/cronutils-";
 char* dirname = NULL;
 
-char* make_tempdir() {
+char* make_tempdir(void) {
   uid_t uid;
   struct passwd* pw;
   struct stat st;

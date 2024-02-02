@@ -17,6 +17,7 @@ limitations under the License.
 #define _GNU_SOURCE /* basename */
 
 #include <errno.h>
+#include <libgen.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
